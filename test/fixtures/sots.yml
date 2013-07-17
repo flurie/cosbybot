@@ -1,0 +1,59 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  name: MyString
+  loc: MyString
+  utodate: MyString
+  race: MyString
+  soldiers: 1
+  pers: MyString
+  ospecs: 1
+  land: 1
+  dspecs: 1
+  peasants: 1
+  elites: 1
+  be: 1
+  thieves: 1
+  stealth: 1
+  money: 1
+  wizards: 1
+  mana: 1
+  food: 1
+  horses: 1
+  runes: 1
+  prisoners: 1
+  tb: 1
+  'off': 1
+  def: 1
+  war: false
+  dragon: MyString
+  plague: false
+
+two:
+  name: MyString
+  loc: MyString
+  utodate: MyString
+  race: MyString
+  soldiers: 1
+  pers: MyString
+  ospecs: 1
+  land: 1
+  dspecs: 1
+  peasants: 1
+  elites: 1
+  be: 1
+  thieves: 1
+  stealth: 1
+  money: 1
+  wizards: 1
+  mana: 1
+  food: 1
+  horses: 1
+  runes: 1
+  prisoners: 1
+  tb: 1
+  'off': 1
+  def: 1
+  war: false
+  dragon: MyString
+  plague: false

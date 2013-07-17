@@ -1,0 +1,22 @@
+class AgentController < ApplicationController
+  respond_to :html
+  require 'data_parser'
+
+  def create
+    case params[:url]
+    when "http://utopia-game.com/wol/game/throne"
+      sot = DataParser.parse_self_sot(params[:data])
+      @sot = Sot.new(sot)
+      respond_to do |format|
+        if @sot.save
+          render head :created
+        else
+          render head :unprocessable_entity
+        end
+      end
+    else
+      render head :not_found
+    end
+  end
+
+end
