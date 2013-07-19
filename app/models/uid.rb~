@@ -1,0 +1,5 @@
+class Uid < ActiveRecord::Base
+  belongs_to :som
+  validates :name, uniqueness => true
+  validates :uid, uniqueness => true
+end

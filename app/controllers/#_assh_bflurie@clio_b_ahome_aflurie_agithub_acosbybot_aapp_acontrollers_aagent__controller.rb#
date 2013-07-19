@@ -1,0 +1,55 @@
+class AgentController < ApplicationController
+  respond_to :html
+  require 'data_parser'
+
+  def create
+    logger.WARN params[:url]
+    case params[:url]
+    when "http://utopia-game.com/wol/game/throne"
+      sot = DataParser.parse_self_sot(params[:data])
+      @sot = Sot.new(sot)
+      #@sot = Sot.from_html(params[:data], params[:prov])
+      if @sot.save
+        return head :created
+      else
+        return head :unprocessable_entity
+      end
+    when "http://utopia-game.com/wol/game/council_military"
+      som = DataParser.parse_self_som(params[:data])
+      @som = Som.new(som)
+      @som.prov_id = @som.get_uid(params[:prov])
+      #@som = Som.from_html(params[:data], params[:prov])
+      if @som.save
+        return head :created
+      else
+        return head :unprocessable_entity
+      end
+    when (/http:\/\/utopia-game.com\/wol\/(sit\/)?game\/thievery/ or
+        "http://utopia-game.com/wol/game/sorcery" or
+        "http://utopia-game.com/wol/game/send_armies")
+      begin
+        DataParser.parse_uids(params[:data]).each do |uid|
+          @check_uid = Uid.find_by prov_id: uid[:prov_id]
+          unless @check_uid
+            #new uid, create
+            @uid = Uid.new(uid)
+            @uid.save
+          else
+            #check for name changes
+            if @check_uid.name != uid[:name]
+              @check_uid.name = uid[:name]
+              @check_uid.save
+            end
+          end
+        end
+      rescue
+        return head :unprocessable_entity
+      end
+      return head :created
+    else
+      return head :not_found
+    end
+  end
+
+
+end
