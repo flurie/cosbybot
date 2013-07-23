@@ -6,6 +6,8 @@ class CreateOps < ActiveRecord::Migration
       t.string :opname
       t.integer :magnitude
       t.boolean :success
+      t.integer :thieves_sent
+      t.integer :losses
 
       t.timestamps
     end

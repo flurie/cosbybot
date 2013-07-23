@@ -150,7 +150,16 @@ module DataParser
       sot[:thieves] = $1.delete ","
       sot[:stealth] = $2.delete ","
     end
-    endats[15].text.delete ","
+    sot[:money] = stats[10].text.delete ","
+    if stats[11].text.match(/\s+([\d,]+) \((\d+)/)
+      #only self-intel will show this, so only add it if it's there
+      sot[:wizards] = $1.delete ","
+      sot[:mana] = $2.delete ","
+    end
+    sot[:food] = stats[12].text.delete ","
+    sot[:horses] = stats[13].text.delete ","
+    sot[:runes] = stats[14].text.delete ","
+    sot[:prisoners] = stats[15].text.delete ","
     sot[:tb] = stats[16].text.delete ","
     sot[:off] = stats[17].text.delete ","
     sot[:nw] = stats[18].text.delete ","
@@ -159,17 +168,32 @@ module DataParser
   end
 
   def DataParser.parse_op_type data, url, provname
-    #TODO ADD THIEVES_SENT AND THIEVES_LOST TO OPS
     op = {}
     data = Nokogiri::HTML data
     if url.match /[?&]p=(\d+)/
       op[:target] = $1
+    else
+      #if there's no op, return false
+      return false
+    end
+    if url.match /[?&]q=(\d+)/
+      op[:thieves_sent] = $1
     end
     if url.match /[?&]o=([\w_]+)/
       op[:opname] = $1
     end
-    op[:success] = data.css(".good") ? true : false
-    op[:source] = (Uid.find_by name: provname).prov_id
+    op[:success] = data.css(".good").empty? ? false : true
+
+    #check for losses
+    failure = data.css(".bad")
+    if !failure.empty?
+      if failure.text.match(/We lost ([\d,]+) thieves/) ||
+          failure.text.
+          match(/([\d,]) of our wizards were killed in an explosion!/)
+        op[:losses] = $1
+      end
+    end
+    op[:source] = (Uid.find_by name: CGI.unescape(provname)).prov_id
     return op
   end
 
@@ -233,28 +257,54 @@ module DataParser
                 else
                   return op
                 end
-    data.css(".good").text.match match_url
-    op[:magnitude] = $1
+    optext = data.css(".good").text
+    optext.match match_url
+    #all successful ops that can have magnitude will have 0 if nothing else
+    op[:magnitude] = $1 || 0
     case op[:opname]
     when "PROPAGANDA"
-      case $2
-      when "of the enemy's specialist troops"
-        op[:opname] += "_" + "SPECS"
-      when "wizards"
-        op[:opname] += "_" + "WIZARDS"
-      when "thieves"
-        op[:opname] += "_" + "THIEVES"
-      when "soldiers"
-        op[:opname] += "_" + "SOLIDERS"
+      #check for successful props but 0 conversions
+      if optext.match(/so few (\w+) were found/) ||
+          optext.match(/no enemy (\w+) were converted/)
+        op[:opname] += "_" + $1.gsub("specialists", "specs").upcase
+      else
+        #check for prop type
+        case $2
+        when "of the enemy's specialist troops"
+          op[:opname] += "_SPECS"
+        when "wizards"
+          op[:opname] += "_WIZARDS"
+        when "thieves"
+          op[:opname] += "_THIEVES"
+        when "soldiers"
+          op[:opname] += "_SOLIDERS"
+        when "Drakes", "Berserkers", "Elf Lords", "Beastmasters", "Brutes",
+          "Knights", "Ogres", "Ghouls"
+          op[:opname] += "_ELITES"
+        end
       end
-      op[:magnitude] = $1
     when "GREATER_ARSON"
       op[:opname] +=  "_" + $2.gsub(" ", "_").upcase
       op[:magnitude] = $1
     when "MYSTIC_VORTEX"
-        #TODO MV CODE
+      op[:magnitude] = []
+      ["Minor Protection", "Greater Protection", "Magic Shield", "Mystic Aura",
+       "Fertile Lands", "Nature's Blessing", "Love & Peace", "Quick Feet",
+       "Builders' Boon", "Inspire Army", "Anonymity", "Invisibility",
+       "Clear Sight", "War Spoils", "Fanaticism", "Mage's Fury", "Town Watch",
+       "Agression", "Fountain of Knowledge", "Animate Dead", "Reflect Magic",
+       "Shadowlight", "Bloodlust", "Patriotism", "Storms", "Droughts",
+       "Vermin", "Greed", "Pitfalls", "Chastity", "Explosions",
+       "Meteor Showers"].each do |spell|
+        if optext.match spell
+          op[:magnitude] << spell
+        end
+      end
+      if op[:magnitude].empty?
+        op[:magnitude] = nil
+      end
     else
-      return op_hash
+      return op
     end
   end
   

@@ -11,7 +11,65 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130720210457) do
+ActiveRecord::Schema.define(version: 20130721161650) do
+
+  create_table "kingdom_changes", force: true do |t|
+    t.string   "time"
+    t.string   "change"
+    t.string   "previous"
+    t.string   "current"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "kingdoms", force: true do |t|
+    t.string   "name"
+    t.string   "loc"
+    t.integer  "nw"
+    t.integer  "land"
+    t.string   "stance"
+    t.integer  "wins"
+    t.integer  "wars"
+    t.boolean  "war"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "naps", force: true do |t|
+    t.string   "kd"
+    t.integer  "end"
+    t.string   "note"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "onlines", force: true do |t|
+    t.integer  "prov_id"
+    t.integer  "time"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "ops", force: true do |t|
+    t.integer  "source"
+    t.integer  "target"
+    t.string   "opname"
+    t.integer  "magnitude"
+    t.boolean  "success"
+    t.integer  "thieves_sent"
+    t.integer  "losses"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "province_changes", force: true do |t|
+    t.string   "time"
+    t.string   "change"
+    t.string   "previous"
+    t.string   "current"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "rails_admin_histories", force: true do |t|
     t.text     "message"
@@ -176,6 +234,32 @@ ActiveRecord::Schema.define(version: 20130720210457) do
     t.integer  "prov_id"
   end
 
+  create_table "sos", force: true do |t|
+    t.integer  "alchemy"
+    t.float    "alchemy_effect"
+    t.integer  "alchemy_progress"
+    t.integer  "tools"
+    t.float    "tools_effect"
+    t.integer  "tools_progress"
+    t.integer  "housing"
+    t.float    "housing_effect"
+    t.string   "housing_progress_integer"
+    t.integer  "food"
+    t.float    "food_effect"
+    t.integer  "food_progress"
+    t.integer  "military"
+    t.float    "military_effect"
+    t.integer  "military_progress"
+    t.integer  "crime"
+    t.float    "crime_effect"
+    t.integer  "crime_progress"
+    t.integer  "channeling"
+    t.float    "channeling_effect"
+    t.integer  "channeling_progress"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "sots", force: true do |t|
     t.string   "name"
     t.string   "loc"
@@ -214,6 +298,53 @@ ActiveRecord::Schema.define(version: 20130720210457) do
     t.integer  "confidence"
   end
 
+  create_table "surveys", force: true do |t|
+    t.integer  "workers"
+    t.integer  "be"
+    t.integer  "jobs"
+    t.integer  "max_workers"
+    t.integer  "barren"
+    t.float    "barren_percent"
+    t.integer  "homes"
+    t.float    "homes_percent"
+    t.integer  "farms"
+    t.float    "farms_percent"
+    t.integer  "mills"
+    t.float    "mills_percent"
+    t.integer  "banks"
+    t.float    "banks_percent"
+    t.integer  "training_grounds"
+    t.float    "training_grounds_percent"
+    t.integer  "armories"
+    t.float    "armories_percent"
+    t.integer  "barracks"
+    t.float    "barracks_percent"
+    t.integer  "forts"
+    t.float    "forts_percent"
+    t.integer  "guard_stations"
+    t.float    "guard_stations_percent"
+    t.integer  "hospitals"
+    t.float    "hospitals_percent"
+    t.integer  "guilds"
+    t.float    "guilds_percent"
+    t.integer  "towers"
+    t.float    "towers_percent"
+    t.integer  "thieves_dens"
+    t.float    "thieves_dens_percent"
+    t.integer  "watch_towers"
+    t.float    "watch_towers_percent"
+    t.integer  "libraries"
+    t.float    "libraries_percent"
+    t.integer  "schools"
+    t.float    "schools_percent"
+    t.integer  "stables"
+    t.float    "stables_percent"
+    t.integer  "dungeons"
+    t.float    "dungeons_percent"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "uids", force: true do |t|
     t.string   "name"
     t.integer  "prov_id"
@@ -238,5 +369,15 @@ ActiveRecord::Schema.define(version: 20130720210457) do
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+
+  create_table "wars", force: true do |t|
+    t.integer  "start"
+    t.integer  "end"
+    t.string   "kd1"
+    t.string   "kd2"
+    t.string   "winner"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
 end
