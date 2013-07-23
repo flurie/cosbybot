@@ -1,0 +1,47 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  alchemy: 1
+  alchemy_effect: 1.5
+  alchemy_progress: 1
+  tools: 1
+  tools_effect: 1.5
+  tools_progress: 1
+  housing: 1
+  housing_effect: 1.5
+  housing_progress_integer: MyString
+  food: 1
+  food_effect: 1.5
+  food_progress: 1
+  military: 1
+  military_effect: 1.5
+  military_progress: 1
+  crime: 1
+  crime_effect: 1.5
+  crime_progress: 1
+  channeling: 1
+  channeling_effect: 1.5
+  channeling_progress: 1
+
+two:
+  alchemy: 1
+  alchemy_effect: 1.5
+  alchemy_progress: 1
+  tools: 1
+  tools_effect: 1.5
+  tools_progress: 1
+  housing: 1
+  housing_effect: 1.5
+  housing_progress_integer: MyString
+  food: 1
+  food_effect: 1.5
+  food_progress: 1
+  military: 1
+  military_effect: 1.5
+  military_progress: 1
+  crime: 1
+  crime_effect: 1.5
+  crime_progress: 1
+  channeling: 1
+  channeling_effect: 1.5
+  channeling_progress: 1

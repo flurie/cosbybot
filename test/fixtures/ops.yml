@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  source: 1
+  target: 1
+  opname: MyString
+  magnitude: 1
+  success: false
+
+two:
+  source: 1
+  target: 1
+  opname: MyString
+  magnitude: 1
+  success: false

@@ -18,6 +18,13 @@ class AgentController < ApplicationController
       else
         return head :unprocessable_entity
       end
+
+    when /http:\/\/utopia-game\.com\/wol\/game\/thievery/
+      if Uid.create_from_list(params[:data])
+        return head :created
+      else
+        return head :unprocessable_entity
+      end
     else
       return head :not_found
     end

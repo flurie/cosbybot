@@ -1,0 +1,19 @@
+sot: add overpop: boolean, rank: string, honor: integer confidence: integer - DONE
+
+CF: kd, end date, note - DONE
+
+KD: name, loc, nw, land, stance, wins, wars, war - test ultima, test taunt banner - DONE
+
+Onlines: provname, date - DONE
+
+Ops: source, target, opname, magnitude, success - DONE
+
+SOS: alch, tools, pop, food, war, crime, channel, effects x 7, progress x 7 - DONE
+
+surv: workers:integer be:integer jobs:integer max_workers:integer barren:integer barren_percent:float homes:integer homes_percent:float farms:integer farms_percent:float mills:integer mills_percent:float banks:integer banks_percent:float training_grounds:integer training_grounds_percent:float armories:integer armories_percent:float barracks:integer barracks_percent:float forts:integer forts_percent:float guard_stations:integer guard_stations_percent:float hospitals:integer hospitals_percent:float guilds:integer guilds_percent:float towers:integer towers_percent:float thieves_dens:integer thieves_dens_percent:float watch_towers:integer watch_towers_percent:float libraries:integer libraries_percent:float schools:integer schools_percent:float stables:integer stables_percent:float dungeons:integer dungeons_percent:float - DONE
+
+wars: start date, end date, kd1, kd2, winner - DONE
+
+kd_changes: stance, name, cf, war, dragon (seen at prov level) - DONE
+
+prov_changes: plague overpop gcstarving foodstarving - DONE

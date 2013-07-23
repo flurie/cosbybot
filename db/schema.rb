@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130716220633) do
+ActiveRecord::Schema.define(version: 20130720210457) do
 
   create_table "rails_admin_histories", force: true do |t|
     t.text     "message"
@@ -173,6 +173,7 @@ ActiveRecord::Schema.define(version: 20130716220633) do
     t.integer  "thieves_training_24"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "prov_id"
   end
 
   create_table "sots", force: true do |t|
@@ -206,6 +207,18 @@ ActiveRecord::Schema.define(version: 20130716220633) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "nw"
+    t.integer  "prov_id"
+    t.boolean  "overpop"
+    t.string   "rank"
+    t.integer  "honor"
+    t.integer  "confidence"
+  end
+
+  create_table "uids", force: true do |t|
+    t.string   "name"
+    t.integer  "prov_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "users", force: true do |t|

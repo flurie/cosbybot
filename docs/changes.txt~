@@ -1,0 +1,17 @@
+prov: plague overpop
+
+kd: stance, name, cf, war, dragon (seen at prov level)
+
+
+
+CF: kd, end date, note
+
+KD: name, loc, nw, land, stance, wins, total_wars, war
+
+Onlines: provname, date
+
+Ops: source, target, opname, magnitude
+
+SOS: alch, tools, pop, food, war, crime, channel, effects x 7, progress x 7
+
+surv: 

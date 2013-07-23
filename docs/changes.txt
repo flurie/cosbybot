@@ -1,0 +1,25 @@
+prov: plague overpop
+
+kd: stance, name, cf, war, dragon (seen at prov level)
+
+
+sot: add overpop: boolean, rank: string, honor: integer confidence: integer
+
+
+CF: kd, end date, note
+
+KD: name, loc, nw, land, stance, wins, total_wars, war
+
+Onlines: provname, date
+
+Ops: source, target, opname, magnitude
+
+SOS: alch, tools, pop, food, war, crime, channel, effects x 7, progress x 7
+
+surv: BE,
+
+wars: start date, end date, kd1, kd2, winner
+
+kd_changes: stance, name, cf, war, dragon (seen at prov level)
+
+prov_changes: plague overpop gcstarving foodstarving

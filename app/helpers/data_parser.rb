@@ -9,54 +9,12 @@ module DataParser
     sot[:name] = $1
     sot[:loc] = $2
     sot[:utodate] = $3
-    stats = data.css(".two-column-stats tbody tr td")
-    sot[:race] = stats[0].text
-    sot[:soldiers] = stats[1].text
-    ruler = stats[2].text
-    if ruler.match(/^The Wealthy/)
-      sot[:pers] = "Merchant"
-    elsif ruler.match(/^The Wise/)
-      sot[:pers] = "Sage"
-    elsif ruler.match(/^The Conniving/)
-      sot[:pers] = "Tactician"
-    elsif ruler.match(/The Rogue$/)
-      sot[:pers] = "Rogue"
-    elsif ruler.match(/The Sorceror$/) or ruler.match(/The Sorceress$/)
-      sot[:pers] = "Mystic"
-    elsif ruler.match(/The Warrior$/)
-      sot[:pers] = "Warrior"
-    elsif ruler.match(/The Blessed$/)
-      sot[:pers] = "Cleric"
-    elsif ruler.match(/The Hero$/)
-      sot[:pers] = "War Hero"
-    else
-      sot[:pers] = nil
-    end
-    sot[:ospecs] = stats[3].text.delete ","
-    sot[:land] = stats[4].text.delete ","
-    sot[:dspecs] = stats[5].text.delete ","
-    sot[:peasants] = stats[6].text.delete ","
-    sot[:elites] = stats[7].text.delete ","
-    sot[:be] = stats[8].text.to_i
-    stats[9].text.match(/\s+([\d,]+) \((\d+)/)
-    sot[:thieves] = $1.delete ","
-    sot[:stealth] = $2.delete ","
-    sot[:money] = stats[10].text.delete ","
-    stats[11].text.match(/\s+([\d,]+) \((\d+)/)
-    sot[:wizards] = $1.delete ","
-    sot[:mana] = $2
-    sot[:food] = stats[12].text.delete ","
-    sot[:horses] = stats[13].text.delete ","
-    sot[:runes] = stats[14].text
-    sot[:prisoners] = stats[15].text.delete ","
-    sot[:tb] = stats[16].text.delete ","
-    sot[:off] = stats[17].text.delete ","
-    sot[:nw] = stats[18].text.delete ","
-    sot[:def] = stats[19].text.delete ","
+    sot.merge!(DataParser.parse_two_column_stats(data))
     messages = data.css(".advice-message").text
     sot[:war] = messages.match(/WAR/) ? true : false
     sot[:dragon] = messages.match(/(Ruby|Gold|Sapphire|Emerald) Dragon/) ? $1 : nil
     sot[:plague] = messages.match(/Plague/) ? true : false
+    sot[:overpop] = messages.match(/[Oo]verpopulation/)
     return sot
   end
 
@@ -118,5 +76,186 @@ module DataParser
     end
     return som
   end
-end
+
+  def DataParser.parse_uids(data)
+    data = Nokogiri::HTML(data)
+    uids = []
+    data.css("select#id_target_province").children.each do |row|
+      #if the option is a number, we got a value we can use, save it
+      if row.attributes["value"].value =~ /\d+/
+        uids << {prov_id: row.attributes["value"].value, name: row.text}
+      end
+    end
+    return uids
+  end
+
+  def DataParser.parse_enemy_sot(data)
+    data = Nokogiri::HTML(data)
+    sot = {}
+    data.css("h2")[0].children.text.match(/The Province of ([\d\w\s]+) \((\d{1,2}:\d{1,2})\)([\d\w\s]+) \(/)
+    sot[:name] = $1
+    sot[:loc] = $2
+    sot[:utodate] = $3
+    sot.merge!(DataParser.parse_two_column_stats(data))
+    messages = data.css(".advice-message").text
+    sot[:war] = messages.match(/WAR/) ? true : false
+    sot[:dragon] = messages.match(/(Ruby|Gold|Sapphire|Emerald) Dragon/) ? $1 : nil
+    sot[:plague] = messages.match(/Plague/) ? true : false
+    sot[:overpop] = messages.match(/[Oo]verpopulation/) #TODO - figure out exact message
+    return sot
+  end
   
+  def DataParser.parse_two_column_stats(data)
+    sot = {}
+    stats = data.css(".two-column-stats tbody tr td")
+    sot[:race] = stats[0].text
+    sot[:soldiers] = stats[1].text
+    ruler = stats[2].text
+    case ruler
+    when /^The Wealthy/
+      sot[:pers] = "Merchant"
+    when /^The Wise/
+      sot[:pers] = "Sage"
+    when /^The Conniving/
+      sot[:pers] = "Tactician"
+    when /The Rogue$/
+      sot[:pers] = "Rogue"
+    when /The Sorceror$/  
+      sot[:pers] = "Mystic"
+    when /The Sorceress$/
+      sot[:pers] = "Mystic"
+    when /The Warrior$/
+      sot[:pers] = "Warrior"
+    when /The Blessed$/
+      sot[:pers] = "Cleric"
+    when /The Hero$/
+      sot[:pers] = "War Hero"
+    else
+      sot[:pers] = nil
+    end
+    if %w(Merchant Sage Tactician).include? sot[:pers]
+      ruler.match /^The \w+ (Sir|Lady|Lord|Noble Lady|Baron|Baroness|Viscount|Viscountess|Count|Countess|Marquis|Marchioness|Duke|Duchess|Prince|Princess)/
+    else
+      ruler.match /^(Sir|Lady|Lord|Noble Lady|Baron|Baroness|Viscount|Viscountess|Count|Countess|Marquis|Marchioness|Duke|Duchess|Prince|Princess)/
+    end
+    sot[:rank] = $1 || "Peasant"
+    sot[:ospecs] = stats[3].text.delete ","
+    sot[:land] = stats[4].text.delete ","
+    sot[:dspecs] = stats[5].text.delete ","
+    sot[:peasants] = stats[6].text.delete ","
+    sot[:elites] = stats[7].text.delete ","
+    sot[:be] = stats[8].text.to_i
+    if stats[9].text.match(/\s+([\d,]+) \((\d+)/)
+      #only self-intel will show this, so only add it if it's there
+      sot[:thieves] = $1.delete ","
+      sot[:stealth] = $2.delete ","
+    end
+    endats[15].text.delete ","
+    sot[:tb] = stats[16].text.delete ","
+    sot[:off] = stats[17].text.delete ","
+    sot[:nw] = stats[18].text.delete ","
+    sot[:def] = stats[19].text.delete ","
+    return sot
+  end
+
+  def DataParser.parse_op_type data, url, provname
+    #TODO ADD THIEVES_SENT AND THIEVES_LOST TO OPS
+    op = {}
+    data = Nokogiri::HTML data
+    if url.match /[?&]p=(\d+)/
+      op[:target] = $1
+    end
+    if url.match /[?&]o=([\w_]+)/
+      op[:opname] = $1
+    end
+    op[:success] = data.css(".good") ? true : false
+    op[:source] = (Uid.find_by name: provname).prov_id
+    return op
+  end
+
+  def DataParser.parse_op_damage data, op
+    data = Nokogiri::HTML data
+    match_url = case op[:opname]
+                when "ROB_THE_GRANARIES"
+                  /Our thieves have returned with ([\d,]+) bushels./
+                when "ROB_THE_VAULTS"
+                  /Our thieves have returned with ([\d,]+) gold coins./
+                when "ROB_THE_TOWERS"
+                  /Our thieves were able to steal ([\d,]+) runes./
+                when "KIDNAPPING"
+                  /Our thieves kidnapped many people, but only were able to return with ([\d,]+) of them./
+                when "ARSON"
+                  /Our thieves burned down ([\d,]+) acres of buildings./
+                when "GREATER_ARSON"
+                  /Our thieves burned down ([\d,]+) ([\w\s]+)./
+                when "NIGHT_STRIKE"
+                  /Our thieves assassinated ([\d,]+) enemy troops./
+                when "INCITE_RIOTS"
+                  /Our thieves have caused rioting. It is expected to last ([\d,]+) days./
+                when "STEAL_WAR_HORSES"
+                  /Our thieves were able to release ([\d,]+) horses but could only bring back ([\d,]+) of them./
+                when "FREE_PRISONERS"
+                  /Our thieves freed ([\d,]+) prisoners from enemy dungeons./
+                when "ASSASSINATE_WIZARDS"
+                  /Our thieves assassinated ([\d,]+) wizards of the enemy's guilds!/
+                when "PROPAGANDA"
+                  /We have converted ([\d,]+) (wizards|thieves|soldiers|of the enemy's specialist troops|\w+ from the enemy)/
+                when "STORMS"
+                  /Storms will ravage .* for (\d+) days!/
+                when "DROUGHTS"
+                  /A drought will reign over the lands of .* for (\d+) days!/
+                when "VERMIN"
+                  /Vermin will feast on the granaries of .* for (\d+) days./
+                when "GREED"
+                  /Our mages have caused our enemy's soldiers to turn greedy for (\d+) days./
+                when "FOOLS_GOLD"
+                  /Our mages have turned ([\d,]+) gold coins in .* to worthless lead./
+                when "PITFALLS"
+                  /Pitfalls will haunt the lands of .* for (\d+) days./
+                when "CHASTITY"
+                  /Much to the chagrin of their men, the womenfolk of .* have taken a vow of chastity for (\d+) days!/
+                when "LIGHTNING_STRIKE"
+                  /Lightning strikes the Towers in .* and incinerates ([\d,]+) runes!/
+                when "EXPLOSIONS"
+                  /Explosions will rock aid shipments to and from .* for (\d+) days!/
+                when "AMNESIA"
+                  /You were able to make the people of .* temporarily forget ([\d,]+) books of knowledge!/
+                when "NIGHTMARES"
+                  /During the night, ([\d,]+) of the men in the armies and thieves' guilds of .* had nightmares./
+                when "MYSTIC_VORTEX"
+                  /A magic vortex overcomes the province of .*, negating ([\d]+) active spells./
+                when "METEOR_SHOWERS"
+                  /Meteors will rain across the lands of .* for (\d+) days/
+                when "TORNADOES"
+                  /Tornadoes scour the lands of .*, laying waste to ([\d,]+) acres of buildings!/
+                when "LAND_LUST"
+                  /Our Land Lust over .* has given us ([\d,]+) new acres of land!/
+                else
+                  return op
+                end
+    data.css(".good").text.match match_url
+    op[:magnitude] = $1
+    case op[:opname]
+    when "PROPAGANDA"
+      case $2
+      when "of the enemy's specialist troops"
+        op[:opname] += "_" + "SPECS"
+      when "wizards"
+        op[:opname] += "_" + "WIZARDS"
+      when "thieves"
+        op[:opname] += "_" + "THIEVES"
+      when "soldiers"
+        op[:opname] += "_" + "SOLIDERS"
+      end
+      op[:magnitude] = $1
+    when "GREATER_ARSON"
+      op[:opname] +=  "_" + $2.gsub(" ", "_").upcase
+      op[:magnitude] = $1
+    when "MYSTIC_VORTEX"
+        #TODO MV CODE
+    else
+      return op_hash
+    end
+  end
+  
+end
