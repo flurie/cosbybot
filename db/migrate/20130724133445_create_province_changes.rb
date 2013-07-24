@@ -1,7 +1,7 @@
 class CreateProvinceChanges < ActiveRecord::Migration
   def change
     create_table :province_changes do |t|
-      t.string :time
+      t.integer :prov_id
       t.string :change
       t.string :previous
       t.string :current

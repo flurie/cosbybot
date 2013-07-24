@@ -1,6 +1,8 @@
 module DataParser
   require 'nokogiri'  
 
+  INTEL_OPS = %w(SPY_ON_THRONE SPY_ON_SCIENCE INFILTRATE SNATCH_NEWS SURVEY SPY_ON_MILITARY)
+  
   #parses a self-made SoT
   def DataParser.parse_self_sot(data)
     data = Nokogiri::HTML(data)
@@ -101,7 +103,7 @@ module DataParser
     sot[:war] = messages.match(/WAR/) ? true : false
     sot[:dragon] = messages.match(/(Ruby|Gold|Sapphire|Emerald) Dragon/) ? $1 : nil
     sot[:plague] = messages.match(/Plague/) ? true : false
-    sot[:overpop] = messages.match(/[Oo]verpopulation/) #TODO - figure out exact message
+    sot[:overpop] = messages.match(/[Oo]verpopulation/) ? true: false
     return sot
   end
   
@@ -307,5 +309,47 @@ module DataParser
       return op
     end
   end
-  
+
+  def DataParser.parse_kingdom_page data
+    kingdom = {}
+    data = Nokogiri::HTML data
+    data.css(".kingdom-label").text.match(/([\w\s]+) \((\d:\d{1,2})\)/)
+    kingdom[:name] = $1
+    kingdom[:loc] = $2
+    two_column_stats = data.css ".two-column-stats td"
+    kingdom[:provinces] = two_column_stats[0].text
+    kingdom[:stance] = two_column_stats[1].text
+    two_column_stats[2].text.match(/([\d,]+)gc \(/)
+    kingdom[:nw] = $1.delete ","
+    two_column_stats[3].text.match(/(\d+) \/ (\d+)/)
+    kingdom[:wins] = $1
+    kingdom[:wars] = $2
+    two_column_stats[4].text.match(/([\d,]+) acres/)
+    kingdom[:land] = $1.delete ","
+    kingdom[:war] = data.text.match(/currently at war with/) ? true : false
+    provinces = []
+    (0..(kingdom[:provinces].to_i-1)).each do |i|
+      province = {}
+      if data.css(".tablesorter tbody td")[i*7+1].text.match("-")
+        #skip empty provs
+        next
+      end
+      data.css(".tablesorter tbody td a")[i].attributes["href"].value.
+        match(/(\d+)$/)
+      province[:name] = data.css(".tablesorter tbody td a")[i].text
+      province[:slot] = $1
+      data.css(".tablesorter tbody td")[i*7+1].text.match(/(\w[\w\s]+[\*\^]?)/)
+      stats = $1
+      province[:online] = stats.match(/\*/) ? true : false
+      province[:protection] = stats.match(/\^/) ? true : false
+      province[:race] = data.css(".tablesorter tbody td")[i*7+2].text
+      data.css(".tablesorter tbody td")[i*7+3].text.match(/([\d,]+)/)
+      province[:land] = $1.delete ","
+      data.css(".tablesorter tbody td")[i*7+4].text.match(/([\d,]+)/)
+      province[:nw] = $1.delete ","
+      province[:rank] = data.css(".tablesorter tbody td")[i*7+6].text
+      provinces << province
+    end
+    return [kingdom, provinces]
+  end
 end

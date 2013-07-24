@@ -6,4 +6,11 @@ class Sot < ActiveRecord::Base
     sot.prov_id = uid.prov_id
     return sot
   end
+
+  def self.enemy_from_page(data, prov_id)
+    sot = self.new(DataParser.parse_enemy_sot(data))
+    sot.prov_id = prov_id
+    return sot
+  end
+  
 end

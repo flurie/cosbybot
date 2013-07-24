@@ -1,0 +1,29 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  name: MyString
+  race: MyString
+  land: 
+  nw: 
+  rank: MyString
+  online: false
+  monarch: false
+  steward: false
+  protection: false
+  slot: 1
+  loc: MyString
+  prov_id: 1
+
+two:
+  name: MyString
+  race: MyString
+  land: 
+  nw: 
+  rank: MyString
+  online: false
+  monarch: false
+  steward: false
+  protection: false
+  slot: 1
+  loc: MyString
+  prov_id: 1

@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ProvinceChangesTest < ActiveSupport::TestCase
+class ProvinceChangeTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class KingdomChangesTest < ActiveSupport::TestCase
+class MiniSotTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

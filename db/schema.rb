@@ -11,10 +11,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130721161650) do
+ActiveRecord::Schema.define(version: 20130724151315) do
 
   create_table "kingdom_changes", force: true do |t|
-    t.string   "time"
+    t.string   "loc"
     t.string   "change"
     t.string   "previous"
     t.string   "current"
@@ -31,6 +31,24 @@ ActiveRecord::Schema.define(version: 20130721161650) do
     t.integer  "wins"
     t.integer  "wars"
     t.boolean  "war"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "provinces"
+  end
+
+  create_table "mini_sots", force: true do |t|
+    t.string   "name"
+    t.string   "race"
+    t.integer  "land"
+    t.integer  "nw"
+    t.string   "rank"
+    t.boolean  "online"
+    t.boolean  "monarch"
+    t.boolean  "steward"
+    t.boolean  "protection"
+    t.integer  "slot"
+    t.string   "loc"
+    t.integer  "prov_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -63,7 +81,7 @@ ActiveRecord::Schema.define(version: 20130721161650) do
   end
 
   create_table "province_changes", force: true do |t|
-    t.string   "time"
+    t.integer  "prov_id"
     t.string   "change"
     t.string   "previous"
     t.string   "current"

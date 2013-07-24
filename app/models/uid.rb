@@ -9,12 +9,16 @@ class Uid < ActiveRecord::Base
       if self.id_exists? params[:prov_id]
         if self.name_changed? params
           #name changed, add the name
+          change = {}
           uid = Uid.find_by prov_id: params[:prov_id]
+          change[:prov_id] = uid.prov_id
+          change[:change] = "name"
+          change[:previous] = uid.name
+          change[:current] = params[:name]
+          prov_change = ProvinceChange.new(change)
+          prov_change.save
           uid.name = params[:name]
-          #TODO: add name change to changes db
-          unless uid.save
-            return false
-          end
+          uid.save
         end
         next
       else

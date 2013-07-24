@@ -1,13 +1,13 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
 
 one:
-  time: MyString
+  prov_id: 1
   change: MyString
   previous: MyString
   current: MyString
 
 two:
-  time: MyString
+  prov_id: 1
   change: MyString
   previous: MyString
   current: MyString
